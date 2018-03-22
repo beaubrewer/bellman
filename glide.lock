@@ -1,0 +1,109 @@
+hash: 8b7ccd63ab40c7312f4163bf13a3851f9514a5def3dc88e5605e06e02854285d
+updated: 2018-03-20T23:50:27.091816526-06:00
+imports:
+- name: cloud.google.com/go
+  version: a920f3b2a884b7826399032aa88f1be140ddfa51
+  subpackages:
+  - compute/metadata
+- name: github.com/fsnotify/fsnotify
+  version: 629574ca2a5df945712d3079857300b5e4da0236
+- name: github.com/golang/protobuf
+  version: bbd03ef6da3a115852eaf24c8a1c46aeb39aa175
+  subpackages:
+  - proto
+- name: github.com/gopherjs/gopherjs
+  version: 2b1d432c8a82c9bff0b0baffaeb3ec6e92974112
+  subpackages:
+  - js
+- name: github.com/hajimehoshi/go-mp3
+  version: 38fd3fbee64d4cf50b38449550183de5bd3c1bb2
+  subpackages:
+  - internal/bits
+  - internal/imdct
+- name: github.com/hajimehoshi/oto
+  version: f4bfa3679fa95f23acd15a9caf2efa45e91bf239
+  subpackages:
+  - internal/jni
+- name: github.com/hashicorp/hcl
+  version: 42e33e2d55a0ff1d6263f738896ea8c13571a8d0
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/printer
+  - hcl/scanner
+  - hcl/strconv
+  - hcl/token
+  - json/parser
+  - json/scanner
+  - json/token
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/magiconair/properties
+  version: 8d7837e64d3c1ee4e54a880c5a920ab4316fc90a
+- name: github.com/mitchellh/mapstructure
+  version: d0303fe809921458f417bcf828397a65db30a7e4
+- name: github.com/pelletier/go-toml
+  version: 2009e44b6f182e34d8ce081ac2767622937ea3d4
+- name: github.com/spf13/afero
+  version: e67d870304c4bca21331b02f414f970df13aa694
+  subpackages:
+  - mem
+- name: github.com/spf13/cast
+  version: acbeb36b902d72a7a4c18e8f3241075e7ab763e4
+- name: github.com/spf13/cobra
+  version: 7b2c5ac9fc04fc5efafb60700713d4fa609b777b
+- name: github.com/spf13/jwalterweatherman
+  version: 12bd96e66386c1960ab0f74ced1362f66f552f7b
+- name: github.com/spf13/pflag
+  version: e57e3eeb33f795204c1ca35f56c44f83227c6e66
+- name: github.com/spf13/viper
+  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
+- name: golang.org/x/mobile
+  version: 901bda64d6606048501fa87bc152c5b554f13085
+  subpackages:
+  - exp/audio/al
+  - internal/mobileinit
+- name: golang.org/x/net
+  version: 6078986fec03a1dcc236c34816c71b0e05018fda
+  subpackages:
+  - context
+  - context/ctxhttp
+- name: golang.org/x/oauth2
+  version: fdc9e635145ae97e6c2cb777c48305600cf515cb
+  subpackages:
+  - google
+  - internal
+  - jws
+  - jwt
+- name: golang.org/x/sys
+  version: ebfc5b4631820b793c9010c87fd8fef0f39eb082
+  subpackages:
+  - unix
+- name: golang.org/x/text
+  version: 825fc78a2fd6fa0a5447e300189e3219e05e1f25
+  subpackages:
+  - transform
+  - unicode/norm
+- name: google.golang.org/api
+  version: 24928b980e6919be4c72647aacd53ebcbb8c4bab
+  subpackages:
+  - calendar
+  - calendar/v3
+  - gensupport
+  - googleapi
+  - googleapi/internal/uritemplates
+- name: google.golang.org/appengine
+  version: 5bee14b453b4c71be47ec1781b0fa61c2ea182db
+  subpackages:
+  - internal
+  - internal/app_identity
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/modules
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
+- name: gopkg.in/yaml.v2
+  version: cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b
+testImports: []

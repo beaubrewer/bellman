@@ -1,0 +1,11 @@
+{
+    "installed": {
+        "client_id": "355476198891-cnq3649mc6up7nnmm61q2ufs9fhvsec8.apps.googleusercontent.com",
+        "project_id": "lunar-mission-164606",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://accounts.google.com/o/oauth2/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": "u58lsHmyLrVnCOWREagHU7BC",
+        "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"]
+    }
+}

@@ -1,0 +1,14 @@
+package: github.com/beaubrewer/bellmanv2
+import:
+- package: github.com/spf13/cobra
+  version: ^0.0.1
+- package: github.com/spf13/viper
+  version: ^1.0.2
+- package: github.com/hajimehoshi/oto
+- package: github.com/hajimehoshi/go-mp3
+- package: golang.org/x/oauth2
+  subpackages:
+  - google
+- package: google.golang.org/api
+  subpackages:
+  - calendar
