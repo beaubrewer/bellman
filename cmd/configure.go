@@ -1,16 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright © 2018 Beau Brewer <beaubrewer@gmail.com>
 
 package cmd
 
@@ -22,7 +10,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/beaubrewer/bellmanv2/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
@@ -49,43 +36,39 @@ HINT: Your Google Calendar ID can be found via the following steps
 3. Click the dropdown next to the calendar you would like to use and click 'calendar settings'
 4. Your Calendar ID is shown near the bottom (e.g. 1sfvl6ubvv51e4qj67v2brqusk@group.calendar.google.com)
 `,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		b, err := ioutil.ReadFile("config/google-client.json")
 		if err != nil {
 			log.Fatalf("Unable to read google-client.json file: %v", err)
 		}
 		oauthConfig, err := google.ConfigFromJSON(b, calendar.CalendarReadonlyScope)
 		if err != nil {
-			log.Fatalf("Unable to parse client secret file to googleConfig: %v", err)
+			log.Fatalf("Unable to parse google-client.json file: %v", err)
 		}
 
 		tok := getTokenFromWeb(oauthConfig)
-		viper.Set("api-key", tok)
+		viper.Set("api-token", tok)
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter the Calendar ID (this is found under the calendar settings): ")
 		calendarID, _ := reader.ReadString('\n')
 		calendarID = strings.TrimSuffix(calendarID, "\n")
 		viper.Set("calendar_id", calendarID)
-		config.SaveConfig()
+		fmt.Println("--------------------------------")
+		fmt.Println("     Configuration Complete!")
+		fmt.Println("--------------------------------")
+		fmt.Printf("Run `bellman server` to start\n\n")
+		if err := viper.WriteConfigAs("config/config.json"); err != nil {
+			return fmt.Errorf("unable to write the config to disk - %s", err)
+		}
+		return nil
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(configureCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// configureCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// configureCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-// GetTokenFromWeb uses Config to request a Token.
-// It returns the retrieved Token.
+// GetTokenFromWeb uses oauth2 to request an return a Token.
 func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	fmt.Printf("Go to the following link in your browser then type the "+

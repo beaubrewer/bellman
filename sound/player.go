@@ -7,6 +7,7 @@ import (
 	"time"
 
 	mp3 "github.com/hajimehoshi/go-mp3"
+	"github.com/hajimehoshi/oto"
 )
 
 //PlayAt queues a sound file to play
@@ -15,7 +16,7 @@ func PlayAt(time time.Duration, file string) {
 }
 
 //Play a sound file
-func Play(file string) {
+func Play(file string) error {
 	//TODO.. check to make sure the file exists
 
 	f, err := os.Open(fmt.Sprintf("chimes/%s", file))

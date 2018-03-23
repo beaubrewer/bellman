@@ -3,41 +3,38 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
 
-	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
 type config struct {
-	CalendarID string       `json:"calendar_id,omitempty" mapstructure:"calendar_id"`
-	APIToken   oauth2.Token `json:"api-token,omitempty" mapstructure:"api-token"`
+	CalendarID string       `json:"calendar_id,omitempty"`
+	APIToken   oauth2.Token `json:"api-token,omitempty"`
 }
 
-//APIToken returns the token if available
-func APIToken() string {
-	var c config
-	fmt.Println("Getting api token if it's available")
-	if err := viper.Unmarshal(&c); err != nil {
-		return ""
-	}
-	if c.APIToken.AccessToken == "" {
-		return ""
-	}
-	s, err := json.Marshal(c.APIToken)
+var c config
+
+//Load and parses the config.json file
+func Load() error {
+	configFile, err := os.Open("config/config.json")
 	if err != nil {
-		return ""
+		return err
 	}
-	return string(s)
+	defer configFile.Close()
+	configBytes, _ := ioutil.ReadAll(configFile)
+	fmt.Printf("Loaded: %s\n", string(configBytes))
+	err = json.Unmarshal(configBytes, &c)
+	return nil
 }
 
-//SaveConfig will write the config file back to disk
-func SaveConfig() error {
-	fmt.Println("--------------------------------")
-	fmt.Println("     Configuration Complete!")
-	fmt.Println("--------------------------------")
-	fmt.Println("Run `bellman server` to start")
-	if err := viper.WriteConfig(); err != nil {
-		return fmt.Errorf("unable to write the config to disk - %s", err)
-	}
-	return nil
+//GetAPIToken returns the oauth2 Token if available
+func GetAPIToken() *oauth2.Token {
+	return &c.APIToken
+}
+
+//GetCalendarID returns the configured Google Calendar ID
+func GetCalendarID() string {
+	return c.CalendarID
 }
