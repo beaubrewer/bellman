@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -17,7 +18,7 @@ import (
 	calendar "google.golang.org/api/calendar/v3"
 )
 
-// configureCmd represents the configure command
+// configureCmd is used to initialize Bellman's configuration
 var configureCmd = &cobra.Command{
 	Use:   "configure",
 	Short: "Configure Bellman",
@@ -37,6 +38,12 @@ HINT: Your Google Calendar ID can be found via the following steps
 4. Your Calendar ID is shown near the bottom (e.g. 1sfvl6ubvv51e4qj67v2brqusk@group.calendar.google.com)
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// check to make sure there are audio files available
+		audioFileNames, err := filepath.Glob("audio/*.mp3")
+		if err != nil || len(audioFileNames) == 0 {
+			log.Fatalf("Please add MP3 files to Bellmans 'audio' directory before configuring. %v", err)
+		}
+		// configure google authentication
 		b, err := ioutil.ReadFile("config/google-client.json")
 		if err != nil {
 			log.Fatalf("Unable to read google-client.json file: %v", err)
@@ -45,14 +52,46 @@ HINT: Your Google Calendar ID can be found via the following steps
 		if err != nil {
 			log.Fatalf("Unable to parse google-client.json file: %v", err)
 		}
-
+		// set the api-token retrieved from google
 		tok := getTokenFromWeb(oauthConfig)
 		viper.Set("api-token", tok)
 		reader := bufio.NewReader(os.Stdin)
+
+		// set the calendar ID
 		fmt.Print("Enter the Calendar ID (this is found under the calendar settings): ")
 		calendarID, _ := reader.ReadString('\n')
 		calendarID = strings.TrimSuffix(calendarID, "\n")
 		viper.Set("calendar_id", calendarID)
+
+		// set Bellman defaults
+		i := 1
+		var loc int = 0
+		var inputError error
+		defaultAudio := make(map[string]string)
+		for {
+			fmt.Printf("\n\n---------------\n   Doorbell Setup    \n---------------\n")
+			fmt.Printf("Enter a name for door #%d (e.g. front) or 'q' to quit: ", i)
+			door, _ := reader.ReadString('\n')
+			door = strings.TrimSuffix(door, "\n")
+			if door == "q" {
+				break
+			}
+			for pos, name := range audioFileNames {
+				fmt.Printf("(%d) %s\n", pos, name)
+			}
+			fmt.Println("------------------------------")
+			fmt.Printf("Enter the file number you want as the default for the %s door: ", door)
+			_, inputError = fmt.Scanf("%d", &loc)
+			for inputError != nil || len(audioFileNames) < loc {
+				fmt.Printf("\nInvalid number. Try again: ")
+				_, inputError = fmt.Scanf("%d", &loc)
+			}
+			doorAudio := audioFileNames[loc]
+			defaultAudio[door] = filepath.Base(doorAudio)
+			i = i + 1
+		}
+		viper.Set("default_audio", defaultAudio)
+
 		fmt.Println("--------------------------------")
 		fmt.Println("     Configuration Complete!")
 		fmt.Println("--------------------------------")

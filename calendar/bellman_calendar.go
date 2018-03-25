@@ -5,24 +5,45 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 	"time"
 
 	"gopkg.in/yaml.v2"
 
 	"github.com/beaubrewer/bellmanv2/config"
-	"github.com/beaubrewer/bellmanv2/sound"
 	"golang.org/x/oauth2/google"
 	gcalendar "google.golang.org/api/calendar/v3"
 )
 
 type BellmanEvent struct {
-	Type   string              `yaml:"type"`
-	Chimes map[string][]string `yaml:"chimes"`
+	Type  string              `yaml:"type"`
+	Audio map[string][]string `yaml:"audio"`
+	Start time.Time
+	End   time.Time
 }
 
 type BellmanCalendar struct {
-	Chimes string
-	srv    *gcalendar.Service
+	srv *gcalendar.Service
+}
+
+func NewBellmanEvent(event *gcalendar.Event) *BellmanEvent {
+	var e BellmanEvent
+	if err := yaml.Unmarshal([]byte(event.Description), &e); err != nil {
+		fmt.Printf("There was a problem unmarshalling the event\n%s\n", err)
+	}
+	// check to see if this is a full day event
+	// full day events do not provide timezone information so we call ParseInLocation
+	// and provide the timezone/location data
+	if len(event.Start.Date) > 0 {
+		z := time.Now().Location()
+		e.Start, _ = time.ParseInLocation("2006-02-01", event.Start.Date, z)
+		e.End, _ = time.ParseInLocation("2006-02-01", event.End.Date, z)
+	} else {
+		e.Start, _ = time.Parse(time.RFC3339, event.Start.DateTime)
+		e.End, _ = time.Parse(time.RFC3339, event.End.DateTime)
+	}
+	fmt.Println(e.Start.Unix())
+	return &e
 }
 
 func NewBellmanCalendar() *BellmanCalendar {
@@ -42,40 +63,39 @@ func NewBellmanCalendar() *BellmanCalendar {
 	return &BellmanCalendar{srv: service}
 }
 
-func (cal *BellmanCalendar) ListEvents() {
-	t := time.Now().Format(time.RFC3339)
-	tmax := time.Now().Add(24 * 365 * time.Hour).Format(time.RFC3339)
+func (cal *BellmanCalendar) GetEvents(t time.Duration) *gcalendar.Events {
+	currentTime := time.Now()
+	currentTimeRFC := currentTime.Format(time.RFC3339)
+	endOfDay := currentTime.Add(t)
+	endOfDayRFC := endOfDay.Format(time.RFC3339)
 	events, err := cal.srv.Events.List(config.GetCalendarID()).ShowDeleted(false).
-		SingleEvents(true).TimeMin(t).TimeMax(tmax).MaxResults(10).OrderBy("startTime").Do()
+		SingleEvents(true).TimeMin(currentTimeRFC).TimeMax(endOfDayRFC).OrderBy("startTime").Do()
 	if err != nil {
-		log.Fatalf("Unable to retrieve next ten of the user's events. %v", err)
+		log.Fatalf("Unable to retrieve user's events. %v\n", err)
 	}
+	return events
+}
 
-	fmt.Println("Upcoming events:")
-	if len(events.Items) > 0 {
-		for _, i := range events.Items {
-			var when string
-			// If the DateTime is an empty string the Event is an all-day Event.
-			// So only Date is available.
-			if i.Start.DateTime != "" {
-				when = i.Start.DateTime
-			} else {
-				when = i.Start.Date
-			}
-			fmt.Printf("%s (%s)\n", i.Summary, when)
-			//trying to parse description as yaml
-			var yevent BellmanEvent
-			yaml.Unmarshal([]byte(i.Description), &yevent)
-			fmt.Printf("\nHere's the type: %s\n", yevent.Type)
-			for k := range yevent.Chimes {
-				fmt.Printf("%s Door\n", k)
-				for _, z := range yevent.Chimes[k] {
-					fmt.Println(z)
-					sound.Play(z)
-				}
-			}
-		}
-	} else {
-		fmt.Printf("No upcoming events found.\n")
+func (cal *BellmanCalendar) GetCurrentTheme() map[string][]string {
+	//Find the most recent theme event starting today and going back 1/yr
+	tmax := time.Now().Format(time.RFC3339)
+	t := time.Now().Add(-365 * 24 * time.Hour).Format(time.RFC3339)
+	fmt.Printf("Searching for theme from %s to %s\n", t, tmax)
+	events, err := cal.srv.Events.List(config.GetCalendarID()).ShowDeleted(false).
+		SingleEvents(true).TimeMin(t).TimeMax(tmax).OrderBy("startTime").Do()
+	if err != nil {
+		log.Fatal("Unable to retrieve events. %v", err)
 	}
+	for i := len(events.Items) - 1; i >= 0; i-- {
+		e := events.Items[i]
+		be := NewBellmanEvent(e)
+		fmt.Printf("Event found:\n%s\n", e.Summary)
+		fmt.Printf("Start: %s\n", be.Start.Format(time.RFC3339))
+		fmt.Printf("End: %s\n", be.End.Format(time.RFC3339))
+		if strings.ToLower(be.Type) == "theme" {
+			return be.Audio
+		}
+	}
+	fmt.Println("No theme found")
+	return map[string][]string{}
 }
