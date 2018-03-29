@@ -92,6 +92,12 @@ HINT: Your Google Calendar ID can be found via the following steps
 		}
 		viper.Set("default_audio", defaultAudio)
 
+		// set MQTT Host
+		fmt.Print("Enter the MQTT Host to subscribe to (topic is bellman/doorbell): ")
+		mqttHost, _ := reader.ReadString('\n')
+		mqttHost = strings.TrimSuffix(calendarID, "\n")
+		viper.Set("mqtt_host", mqttHost)
+
 		fmt.Println("--------------------------------")
 		fmt.Println("     Configuration Complete!")
 		fmt.Println("--------------------------------")

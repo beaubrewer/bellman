@@ -1,3 +1,5 @@
+// Copyright © 2018 Beau Brewer <beaubrewer@gmail.com>
+
 package manager
 
 import (
@@ -5,28 +7,38 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/beaubrewer/bellmanv2/calendar"
+	"github.com/beaubrewer/bellmanv2/manager/jobs"
+	"github.com/beaubrewer/bellmanv2/manager/mqtt"
+	"github.com/beaubrewer/bellmanv2/manager/timer"
 )
 
-// type ScheduledEvents struct {
-// 	Events []Event
-// }
+var getBellmanEventsJob *jobs.GetBellmanEventsJob
 
 //Start is the server entry point
 func Start() {
 	quit := configureSignals()
-	//create a calendar
-	c := calendar.NewBellmanCalendar()
-	c.GetCurrentTheme()
-	//a := NewAudioManager()
+	calendarEvents := make(chan []*calendar.BellmanEvent)
 
-	for {
-		select {
-		case <-quit:
-			return
-		}
+	//start the MQTT consumer
+	mqtt.Start()
+
+	//start the job to fetch events from Google and process
+	//bellman events
+	getBellmanEventsJob = &jobs.GetBellmanEventsJob{
+		Events:       calendarEvents,
+		AudioUpdater: timer.NewAudioUpdater(),
 	}
+	s := timer.New()
+	s.Every(1 * time.Hour).Do(getBellmanEventsJob)
+	s.Start()
+
+	//audioupdater updates the audio catalog on the events scheduled date/time
+	getBellmanEventsJob.AudioUpdater.Start()
+
+	<-quit
 }
 
 func configureSignals() <-chan bool {
@@ -35,8 +47,10 @@ func configureSignals() <-chan bool {
 	signal.Notify(sigs, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGINT)
 	go func() {
 		<-sigs
-		fmt.Printf("Shutting down Bellman...")
+		fmt.Printf("Shutting down Bellman...\n")
 		//any cleanup needed
+		mqtt.Stop()
+		getBellmanEventsJob.AudioUpdater.Stop()
 		done <- true
 	}()
 	return done

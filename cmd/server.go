@@ -19,14 +19,14 @@ var serverCmd = &cobra.Command{
 	Short: "Start Bellman",
 	Long:  `The server command will start Bellman`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := config.Load(); err != nil {
-			fmt.Printf("%s\nBellman is not configured. Please run 'bellman configure'", err)
-			return
-		}
 		manager.Start()
 	},
 }
 
 func init() {
+	if err := config.Load(); err != nil {
+		fmt.Printf("%s\nBellman is not configured. Please run 'bellman configure'", err)
+		return
+	}
 	rootCmd.AddCommand(serverCmd)
 }

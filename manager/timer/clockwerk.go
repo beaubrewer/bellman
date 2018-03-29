@@ -1,4 +1,4 @@
-package manager
+package timer
 
 import (
 	"time"
@@ -17,6 +17,14 @@ type Entry struct {
 	Job    Job
 }
 
+// Clockwerk keeps track of any number of entries, invoking associated Job's Run
+// method as specified by the schedule.
+type Clockwerk struct {
+	stop    chan struct{}
+	running bool
+	entries []*Entry
+}
+
 func newEntry(period time.Duration) *Entry {
 	return &Entry{
 		Period: period,
@@ -29,15 +37,7 @@ func (e *Entry) Do(job Job) {
 	e.Job = job
 }
 
-// Clockwerk keeps track of any number of entries, invoking associated Job's Run
-// method as specified by the schedule.
-type Clockwerk struct {
-	entries []*Entry
-	stop    chan struct{}
-	running bool
-}
-
-// New returns a new Clockwerk job runner.
+// New returns a new Clockwerk job runner
 func New() *Clockwerk {
 	return &Clockwerk{
 		entries: nil,
@@ -79,7 +79,6 @@ func (c *Clockwerk) Stop() {
 
 func (c *Clockwerk) schedule(e *Entry) {
 	e.Prev = time.Now()
-
 	e.Next = e.Prev.Add(e.Period)
 }
 
@@ -116,7 +115,6 @@ func (c *Clockwerk) runJob(e *Entry) {
 			c.schedule(e)
 		}
 	}()
-
 	c.schedule(e)
 	e.Job.Run()
 }

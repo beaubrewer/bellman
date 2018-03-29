@@ -1,3 +1,5 @@
+// Copyright © 2018 Beau Brewer <beaubrewer@gmail.com>
+
 package config
 
 import (
@@ -11,7 +13,8 @@ import (
 type config struct {
 	CalendarID   string            `json:"calendar_id,omitempty"`
 	APIToken     oauth2.Token      `json:"api-token,omitempty"`
-	DefaultAudio map[string]string `json:"default_audio",omitempty`
+	DefaultAudio map[string]string `json:"default_audio,omitempty"`
+	MQTTHost     string            `json:"mqtt_host,omitempty"`
 }
 
 var c config
@@ -42,6 +45,15 @@ func GetCalendarID() string {
 
 // GetDefaultAudio returns a map of default audio clips
 // Defaults are played when a theme is not currently set
-func GetDefaultAudio() map[string]string {
-	return c.DefaultAudio
+func GetDefaultAudio(key string) string {
+	file, ok := c.DefaultAudio[key]
+	if !ok {
+		return ""
+	}
+	return file
+}
+
+// GetMQTTHost returns the configured MQTT host
+func GetMQTTHost() string {
+	return c.MQTTHost
 }
