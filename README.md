@@ -9,6 +9,12 @@ Bellman requires
 - [A MQTT Broker](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-the-mosquitto-mqtt-messaging-broker-on-ubuntu-16-04) to run. [CloudMQTT](https://www.cloudmqtt.com/plans.html) offers a free tier if you prefer not to install one.
 - A Google Account and Calendar to schedule sound themes
 
+Clone the bellman repo into your $GOPATH
+If you are building on a Raspberry PI you may need to install alsa sound libs via
+```sh
+$ apt-get install libasound2-dev
+```
+
 ```sh
 $ ./bellman configure
 ```

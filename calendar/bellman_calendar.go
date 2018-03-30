@@ -82,5 +82,8 @@ func (cal *BellmanCalendar) GetEvents(t time.Duration) *gcalendar.Events {
 	if err != nil {
 		log.Fatalf("Unable to retrieve user's events. %v\n", err)
 	}
+	// TODO... if bellman starts within an event that is not a full day (between the start/end)
+	// it will not set the theme correctly. We could retrieve the last X events and get the latest
+	// event if desired
 	return events
 }
