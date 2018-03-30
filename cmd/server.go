@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/beaubrewer/bellmanv2/config"
-	"github.com/beaubrewer/bellmanv2/manager"
+	"github.com/beaubrewer/bellman/config"
+	"github.com/beaubrewer/bellman/manager"
 	"github.com/spf13/cobra"
 )
 

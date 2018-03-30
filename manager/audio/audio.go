@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/beaubrewer/bellmanv2/config"
+	"github.com/beaubrewer/bellman/config"
 	mp3 "github.com/hajimehoshi/go-mp3"
 	"github.com/hajimehoshi/oto"
 )

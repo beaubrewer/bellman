@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/beaubrewer/bellmanv2/calendar"
-	"github.com/beaubrewer/bellmanv2/manager/audio"
+	"github.com/beaubrewer/bellman/calendar"
+	"github.com/beaubrewer/bellman/manager/audio"
 )
 
 // AudioUpdater holds the current events
@@ -60,6 +60,10 @@ func (a *AudioUpdater) checkForUpdates() {
 	a.mutex.Lock()
 	now := time.Now()
 	if len(a.bellmanEvents) != 0 {
+		//protective method to remove events that were missed
+		for now.After(a.bellmanEvents[0].End) {
+			a.bellmanEvents = a.bellmanEvents[1:]
+		}
 		event := a.bellmanEvents[0]
 		if now.After(event.Start) && now.Before(event.End) {
 			//set the audio theme

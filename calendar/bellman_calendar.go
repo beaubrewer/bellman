@@ -9,7 +9,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/beaubrewer/bellmanv2/config"
+	"github.com/beaubrewer/bellman/config"
 	"golang.org/x/oauth2/google"
 	gcalendar "google.golang.org/api/calendar/v3"
 )

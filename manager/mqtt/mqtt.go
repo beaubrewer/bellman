@@ -7,8 +7,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/beaubrewer/bellmanv2/config"
-	"github.com/beaubrewer/bellmanv2/manager/audio"
+	"github.com/beaubrewer/bellman/config"
+	"github.com/beaubrewer/bellman/manager/audio"
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 )
 

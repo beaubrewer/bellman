@@ -2,7 +2,7 @@
 
 package main
 
-import "github.com/beaubrewer/bellmanv2/cmd"
+import "github.com/beaubrewer/bellman/cmd"
 
 func main() {
 	cmd.Execute()

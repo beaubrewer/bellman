@@ -5,8 +5,8 @@ package jobs
 import (
 	"time"
 
-	"github.com/beaubrewer/bellmanv2/calendar"
-	"github.com/beaubrewer/bellmanv2/manager/timer"
+	"github.com/beaubrewer/bellman/calendar"
+	"github.com/beaubrewer/bellman/manager/timer"
 )
 
 var client *calendar.BellmanCalendar

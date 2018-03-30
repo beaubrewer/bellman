@@ -9,16 +9,17 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/beaubrewer/bellmanv2/calendar"
-	"github.com/beaubrewer/bellmanv2/manager/jobs"
-	"github.com/beaubrewer/bellmanv2/manager/mqtt"
-	"github.com/beaubrewer/bellmanv2/manager/timer"
+	"github.com/beaubrewer/bellman/calendar"
+	"github.com/beaubrewer/bellman/manager/jobs"
+	"github.com/beaubrewer/bellman/manager/mqtt"
+	"github.com/beaubrewer/bellman/manager/timer"
 )
 
 var getBellmanEventsJob *jobs.GetBellmanEventsJob
 
 //Start is the server entry point
 func Start() {
+	fmt.Println("Starting Bellman...")
 	quit := configureSignals()
 	calendarEvents := make(chan []*calendar.BellmanEvent)
 
@@ -38,6 +39,7 @@ func Start() {
 	//audioupdater updates the audio catalog on the events scheduled date/time
 	getBellmanEventsJob.AudioUpdater.Start()
 
+	fmt.Println("...at your service")
 	<-quit
 }
 
