@@ -3,6 +3,7 @@
 package jobs
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/beaubrewer/bellman/calendar"
@@ -20,6 +21,7 @@ type GetBellmanEventsJob struct {
 
 // Run will return 3 days of events
 func (j GetBellmanEventsJob) Run() {
+	fmt.Println("Getting events from Google Calendar...")
 	if client == nil {
 		client = calendar.NewBellmanCalendar()
 	}

@@ -33,7 +33,7 @@ func Start() {
 		AudioUpdater: timer.NewAudioUpdater(),
 	}
 	s := timer.New()
-	s.Every(1 * time.Hour).Do(getBellmanEventsJob)
+	s.Every(10 * time.Second).Do(getBellmanEventsJob)
 	s.Start()
 
 	//audioupdater updates the audio catalog on the events scheduled date/time

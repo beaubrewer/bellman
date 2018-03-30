@@ -70,8 +70,9 @@ func Play(file string) {
 		}
 		defer p.Close()
 
-		buf := make([]byte, 1024)
-		if _, err := io.CopyBuffer(p, d, buf); err != nil {
+		//buf := make([]byte, 1024)
+		//if _, err := io.CopyBuffer(p, d, buf); err != nil {
+		if _, err := io.Copy(p, d); err != nil {
 			return
 		}
 	}()
