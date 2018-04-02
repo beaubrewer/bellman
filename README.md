@@ -10,10 +10,23 @@ Bellman requires
 - A Google Account and Calendar to schedule sound themes
 
 Clone the bellman repo into your $GOPATH
+
+Install [Glide](https://glide.sh/) - the package manager bellman uses.
+```sh
+$ curl https://glide.sh/get | sh
+```
+If you are using a Mac, Glide can be installed via homebrew. `brew install glide`
+
+Move into bellmans project root and run `glide install` to install dependencies.
+
 If you are building on a Raspberry PI you may need to install alsa sound libs via
 ```sh
 $ apt-get install libasound2-dev
 ```
+
+Build bellman via `go build bellman.go`
+
+Configure bellman
 
 ```sh
 $ ./bellman configure
